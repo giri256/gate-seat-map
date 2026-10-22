@@ -388,10 +388,36 @@ $("types").innerHTML = TYPES.map(t => `<button data-k="${t}" aria-pressed="true"
 document.querySelectorAll("#cats [data-c]").forEach(b => b.style.setProperty("--dot", `var(--c-${b.dataset.c})`));
 $("foot").textContent = `Data built ${D.built} · CCMT cutoff rows joined: ${Object.entries(D.stats).map(([y,s]) => y + " " + s).join(" · ")}`;
 
-const P = new URLSearchParams(location.hash.slice(1));
-setDeg(byCode[P.get("deg")] ?? byCode["T118"] ?? 0);
-$("paper").value = P.get("paper") || "CS"; $("score").value = P.get("score") || "";
-$("year").value = P.get("year") || D.years[0]; st.cat = P.get("cat") || "OPEN"; press($("pwd"), P.get("pwd") === "1");
+// Shareable state in a short readable hash: #/<degree>/<paper>[/<score>][/<cat>[-pwd]][/<year>], defaults left out
+// (e.g. #/cse/cs/650/obc). No hash at all while everything is at its default. Old ?deg=T118&paper=... links still load.
+const slug = x => x.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const DEG_SLUG = CODE.map((c, i) => POP.has(i) ? slug(POP.get(i).short) : c.toLowerCase());
+const bySlug = Object.fromEntries(DEG_SLUG.map((x, i) => [x, i]));
+const CAT_SLUG = {OPEN:"gen", EWS:"ews", "OBC-NCL":"obc", SC:"sc", ST:"st"}, byCatSlug = Object.fromEntries(Object.entries(CAT_SLUG).map(([k, v]) => [v, k]));
+const DEF = {deg: byCode["T118"] ?? 0, paper: "CS", year: D.years[0], cat: "OPEN"};
+function readHash() {
+  const h = decodeURIComponent(location.hash.slice(1)), o = {};
+  if (h.includes("=")) { const P = new URLSearchParams(h);
+    Object.assign(o, {deg: byCode[P.get("deg")], paper: P.get("paper"), score: P.get("score"), year: P.get("year"), cat: P.get("cat"), pwd: P.get("pwd") === "1"});
+  } else { const [d, pp, ...rest] = h.replace(/^\/+/, "").split("/").filter(Boolean);
+    o.deg = bySlug[d] ?? byCode[(d || "").toUpperCase()]; o.paper = pp && pp.toUpperCase();
+    for (const t of rest) { const m = t.match(/^([a-z]+)(-pwd)?$/);
+      if (/^\d{4}$/.test(t) && D.years.includes(t)) o.year = t; else if (/^\d{1,4}$/.test(t)) o.score = t;
+      else if (m && byCatSlug[m[1]]) { o.cat = byCatSlug[m[1]]; o.pwd = !!m[2]; } else if (t === "pwd") o.pwd = true; } }
+  return o;
+}
+function writeHash(di, paper, cat, pwd, score, year) {
+  const parts = [DEG_SLUG[di] || "", paper.toLowerCase()];
+  if (score) parts.push(score);
+  if (cat !== DEF.cat || pwd) parts.push(CAT_SLUG[cat] + (pwd ? "-pwd" : ""));
+  if (year !== DEF.year) parts.push(year);
+  const dflt = di === DEF.deg && paper === DEF.paper && parts.length === 2, url = location.pathname + location.search + (dflt ? "" : "#/" + parts.join("/"));
+  if (url !== location.pathname + location.search + location.hash) history.replaceState(null, "", url);
+}
+const H = readHash();
+setDeg(H.deg ?? DEF.deg);
+$("paper").value = D.papers.some(([k]) => k === H.paper) ? H.paper : DEF.paper; $("score").value = H.score || "";
+$("year").value = H.year || DEF.year; st.cat = H.cat || DEF.cat; press($("pwd"), !!H.pwd);
 root.dataset.theme = localStorage.getItem("gsm-theme") || "dark";
 function setCat(c) { st.cat = c; document.querySelectorAll("#cats [data-c]").forEach(b => press(b, b.dataset.c === c)); root.style.setProperty("--acct", `var(--c-${c})`); }
 setCat(st.cat);
@@ -449,7 +475,7 @@ $("tbody").onclick = e => { const tr = e.target.closest("tr.r"); if (!tr) return
 
 function render(animate) {
   const di = st.deg, paper = $("paper").value, c = catKey(), y = $("year").value, s = +$("score").value || 0, q = $("q").value.toLowerCase().trim();
-  history.replaceState(null, "", "#" + new URLSearchParams({deg:CODE[di] || "", paper, cat:st.cat, pwd:c.endsWith("PwD")?1:0, score:$("score").value, year:y}));
+  writeHash(di, paper, st.cat, c.endsWith("PwD"), $("score").value, y);
   let rows = D.programs.filter(p => st.fields.has(p.field) && st.types.has(p.type) && (!q || (p.inst + " " + p.prog + " " + p.dept).toLowerCase().includes(q)))
     .map(p => { const a = p.cut[y] && p.cut[y][c], ls = lastSpecial(a); return {p, a, ls, final: ls ? ls.v : null, seats: p.seats[c] || 0, el: di < 0 ? {t:3, why:"pick your degree"} : tier(p, di, paper)}; });
   const {k, dir} = st.sort;
