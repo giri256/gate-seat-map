@@ -183,6 +183,7 @@ tr.r.open td{background:var(--card2)}
 .iit-main{display:grid;grid-template-columns:minmax(220px,auto) 1fr;gap:28px;align-items:end;margin-top:18px}
 .iit-main .stat-n{font-size:52px}
 .iit.win{box-shadow:inset 3px 0 0 var(--good),0 0 28px -10px color-mix(in srgb,var(--good) 55%,transparent)}
+.iit-tw{overflow-x:auto;min-width:0}
 .iit table{min-width:640px;margin-top:6px}
 .iit th{position:static;background:none;cursor:default}
 .iit td,.iit th{padding:9px 10px}.iit td:first-child,.iit th:first-child{padding-left:0}.iit td:last-child,.iit th:last-child{padding-right:0}
@@ -196,7 +197,45 @@ tr.r.open td{background:var(--card2)}
 @keyframes fadeup{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 .swap{animation:swap .35s var(--ease)}@keyframes swap{from{opacity:.25;transform:translateY(4px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
-@media (max-width:980px){.form{grid-template-columns:1fr 1fr}.stats{grid-template-columns:1fr 1fr}.dgrid,.iit-main{grid-template-columns:1fr}.cats{margin-left:0}}
+@media (max-width:980px){.form{grid-template-columns:1fr 1fr}.stats{grid-template-columns:1fr 1fr}.dgrid,.iit-main{grid-template-columns:minmax(0,1fr)}.cats{margin-left:0}}
+/* phones: header scrolls away, controls stay on one swipeable row, IIT tables stack */
+@media (max-width:640px){
+  .top{position:static;padding:10px 14px;gap:8px}
+  .brand .mute{display:none}
+  .tabs,.cats{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;max-width:100%}.tabs::-webkit-scrollbar,.cats::-webkit-scrollbar{display:none}
+  .tabs button,.pillbtn{white-space:nowrap;flex:none}
+  .cats{gap:5px}.pillbtn{padding:6px 12px;font-size:13.5px}.theme{width:32px;height:32px}
+  .wrap{padding:24px 14px 28px}.foot{padding:12px 14px 22px}
+  .vhead{margin-bottom:22px;gap:10px}.lede{font-size:16.5px}
+  .card{padding:20px 16px}.form{grid-template-columns:minmax(0,1fr)}
+  .stats{gap:18px 16px}.stat-n{font-size:34px}
+  .row2 .ctl{flex-wrap:wrap}.search{min-width:0;flex-basis:100%}
+  .tablewrap{margin:0 -16px -20px;max-height:none;overflow:visible}th:first-child,td:first-child{padding-left:16px}th:last-child,td:last-child{padding-right:16px}
+  /* results: each row becomes a card (sorting by column header is desktop-only) */
+  #v-finder table{min-width:0}#v-finder thead{display:none}#v-finder tbody,#v-finder tr.sep,#v-finder tr.detail{display:block}
+  tr.sep td,.detail>td{display:block;position:static}.detail>td{padding:0 16px}
+  tr.r{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));padding:14px 16px 12px;border-bottom:1px solid var(--grid)}
+  tr.r td{border:0;padding:0!important;background:none!important;box-shadow:none!important}
+  tr.r td:nth-child(1){grid-area:1/1/2/5}tr.r td:nth-child(11){grid-area:1/5/2/7;text-align:right;font-size:22px}
+  tr.r td:nth-child(2){grid-area:2/1/3/7;margin-top:8px}tr.r td:nth-child(4){display:none}
+  tr.r td:nth-child(n+5):nth-child(-n+10){grid-row:3;margin-top:10px;padding:5px 4px!important;text-align:left;border-radius:8px;font-variant-numeric:tabular-nums}
+  tr.r td:nth-child(n+5):nth-child(-n+10)::before{content:attr(data-k);display:block;font-size:10.5px;font-weight:680;letter-spacing:.06em;color:var(--mute)}
+  tr.r td.hi:nth-child(n+5):nth-child(-n+10){background:color-mix(in srgb,var(--acct) 9%,transparent)!important}
+  tr.r td:nth-child(12){grid-area:4/1/5/5;margin-top:10px}tr.r td.seats{grid-area:4/5/5/7;margin-top:10px;align-self:center;color:var(--mute);font-size:13px}
+  tr.r td.seats::after{content:" seats"}
+  tr.r.t1{background:color-mix(in srgb,var(--acct) 4%,transparent);box-shadow:inset 3px 0 0 var(--acct)}
+  tr.r.win{background:color-mix(in srgb,var(--good) 7%,transparent);box-shadow:inset 3px 0 0 var(--good)}
+  tr.r.t2{box-shadow:inset 3px 0 0 color-mix(in srgb,var(--warn) 70%,transparent)}tr.r.open{background:var(--card2)}
+  .inst,.prog{max-width:none}
+  .dgrid{gap:12px}.dbox{padding:14px 10px;overflow-x:auto}.mini th,.mini td{padding:6px 4px!important;font-size:12.5px}
+  .iit{padding:20px 16px}.iit-h h2{font-size:19px}.iit-main{gap:14px;margin-top:12px}.iit-main .stat-n{font-size:44px}
+  .iit table{min-width:0}.iit thead{display:none}
+  .iit tr{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:2px 0;padding:12px 0;border-bottom:1px solid var(--grid)}
+  .iit td{border:0;padding:0 2px!important}.iit td:nth-child(-n+2){grid-column:1/-1;padding:0 0 4px!important}
+  .iit td:first-child{color:var(--mute);font-size:12.5px;padding-bottom:0!important}
+  .iit td.num{text-align:left;padding:6px 4px!important;border-radius:8px;font-variant-numeric:tabular-nums}
+  .iit td.num::before{content:attr(data-k);display:block;font-size:10.5px;font-weight:680;letter-spacing:.08em;color:var(--mute);text-transform:uppercase}
+}
 </style>
 </head>
 <body>
@@ -558,7 +597,7 @@ function render(animate) {
 function row(r, i, animate, s, c) {
   const p = r.p, id = p.icode + p.pcode + p.group, open = st.open === id, t = r.el.t, win = t < 3 && s && r.fit === 0;
   const cells = RS.map((_, j) => { const x = r.a && r.a[j];
-    return x && x[1] != null ? `<td class="num c ${HI.has(j)?"hi":""} ${t < 3 ? cls(x[1], s) : ""}" title="${RS[j]}: opening ${x[0] ?? "?"} · closing ${x[1]}">${x[1]}</td>` : `<td class="num dash ${HI.has(j)?"hi":""}">—</td>`; }).join("");
+    return x && x[1] != null ? `<td class="num c ${HI.has(j)?"hi":""} ${t < 3 ? cls(x[1], s) : ""}" title="${RS[j]}: opening ${x[0] ?? "?"} · closing ${x[1]}" data-k="${RS[j]}">${x[1]}</td>` : `<td class="num dash ${HI.has(j)?"hi":""}" data-k="${RS[j]}">—</td>`; }).join("");
   const status = t === 3 ? `<span class="pill">not open</span>` : !s || r.final == null ? `<span class="pill">${r.final == null ? "no data" : "–"}</span>` :
     s >= r.final ? `<span class="pill good">+${s - r.final}</span>` : s >= r.final - 30 ? `<span class="pill warn">−${r.final - s}</span>` : `<span class="pill">−${r.final - s}</span>`;
   let note;
@@ -569,7 +608,7 @@ function row(r, i, animate, s, c) {
   return `<tr class="r t${t} ${win ? "win" : ""} ${animate && i < 40 ? "in" : ""} ${open ? "open" : ""}" style="--i:${i}" data-id="${id}">
     <td><div class="inst">${esc(shortInst(p.inst))}</div><span class="tag">${p.type === TYPES[2] ? "CFTI" : p.type}</span></td>
     <td><div class="prog">${esc(p.prog)}</div><span class="tag f" style="--fc:var(--f-${p.field})">${esc(FL[p.field].replace(" (accepts CS/DA)",""))}</span><span class="tag">group ${p.group}</span>${note}</td>
-    <td class="num">${r.seats || '<span class="sub">0</span>'}</td><td>${spark(r.a, t < 3 ? s : 0)}</td>${cells}
+    <td class="num seats">${r.seats || '<span class="sub">0</span>'}</td><td>${spark(r.a, t < 3 ? s : 0)}</td>${cells}
     <td class="num hi final ${t < 3 ? cls(r.final, s) : ""}">${r.final ?? "—"}${r.ls ? `<span class="rn">${r.ls.r}</span>` : ""}</td>
     <td>${status}</td></tr>` + (open ? detail(p, c) : "");
 }
@@ -629,8 +668,8 @@ function cardsInto(SRC, pfx, noun) {
     return `<article class="iit${fit === 0 ? " win" : ""}" style="--i:${gi}">
       <div class="iit-h"><h2>${esc(top.iit)} · ${esc(top.degree)} ${esc(top.program)}</h2>${fit === 0 ? `<span class="glowpill win">● Your score clears this</span>` : fit === 1 ? `<span class="glowpill">◐ Within 30 marks</span>` : ""}<span class="sub">${esc(top.department || "")} · GATE ${esc(top.gate_papers)}</span></div>
       <div class="iit-main"><div><div class="stat-n">${esc(v || "—")}</div><div class="stat-l">${esc(top.cutoff_type)}</div><div class="stat-s">${esc(top.year)} · ${esc(top.admission_route)} · ${{GEN:"General",OBC_NCL:"OBC-NCL"}[col] || col}</div></div>
-        <table><thead><tr><th>Year</th><th>Route · figure</th>${K.map(k => `<th class="num ${k === col ? "me" : ""}">${k.replace("_NCL","")}</th>`).join("")}</tr></thead>
-        <tbody>${rs.map(r => `<tr><td>${esc(r.year)}</td><td><span class="sub">${esc(r.admission_route)}</span><br>${esc(r.cutoff_type)}</td>${K.map(k => `<td class="num ${k === col ? "me" : ""}">${esc(val(r, k) || "—")}</td>`).join("")}</tr>`).join("")}</tbody></table></div>
+        <div class="iit-tw"><table><thead><tr><th>Year</th><th>Route · figure</th>${K.map(k => `<th class="num ${k === col ? "me" : ""}">${k.replace("_NCL","")}</th>`).join("")}</tr></thead>
+        <tbody>${rs.map(r => `<tr><td>${esc(r.year)}</td><td><span class="sub">${esc(r.admission_route)}</span><br>${esc(r.cutoff_type)}</td>${K.map(k => `<td class="num ${k === col ? "me" : ""}" data-k="${k.replace("_NCL","")}">${esc(val(r, k) || "—")}</td>`).join("")}</tr>`).join("")}</tbody></table></div></div>
       <details><summary>Eligibility, notes and sources</summary>${qd ? `<p><b>Eligible degrees:</b> ${esc(qd)}</p>` : ""}${notes.map(n => `<p>${esc(n)}</p>`).join("")}
         <p>${srcs.map((u, k) => `<a href="${esc(u)}" target="_blank" rel="noopener">Official source ${srcs.length > 1 ? k + 1 : ""} →</a>`).join(" · ")}</p></details>
     </article>`; }).join("") : `<div class="card empty">No records for GATE ${esc(paper)} here yet.</div>`;
