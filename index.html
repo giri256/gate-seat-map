@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GATE Seat Map · M.Tech in CS / DA / AI-ML with your GATE score</title>
+<style>
+:root{
+  --page:#0e0e0d;--card:#1a1a19;--card2:#252523;--card3:#31312e;--ink:#f3f1ea;--ink2:#b8b5ab;--mute:#85827a;--grid:#232321;--ring:rgba(255,255,255,.06);
+  --eyebrow:#f2b45a;--good:#5fd3a0;--good-soft:#1d3a2e;--warn:#f2b45a;--warn-soft:#3a2e17;--bad:#f07a5f;--focus:#7d9cf8;
+  --c-OPEN:#7d9cf8;--c-EWS:#f2b45a;--c-OBC-NCL:#ec6aa0;--c-SC:#5fd3a0;--c-ST:#b99bff;
+  --f-cs:#7d9cf8;--f-ai:#b99bff;--f-sec:#f07a5f;--f-allied:#5fd3a0;--f-other:#85827a;
+  --font:"Inter Variable",Inter,"SF Pro Text",system-ui,-apple-system,"Segoe UI",sans-serif;--ease:cubic-bezier(.2,0,0,1);--r-card:22px;--r-tile:18px;
+  --acct:var(--c-OPEN);color-scheme:dark}
+html[data-theme=light]{--page:#f6f5f0;--card:#fff;--card2:#efede6;--card3:#e4e2d9;--ink:#161614;--ink2:#4f4d47;--mute:#87847b;--grid:#ebe9e2;--ring:rgba(22,22,20,.07);
+  --eyebrow:#b26b00;--good:#13865a;--good-soft:#d5f0e3;--warn:#b26b00;--warn-soft:#fbecd2;--bad:#c8452c;--focus:#4f63d6;
+  --c-OPEN:#4f63d6;--c-EWS:#b26b00;--c-OBC-NCL:#c83c7c;--c-SC:#13865a;--c-ST:#7a4fd6;--f-cs:#4f63d6;--f-ai:#7a4fd6;--f-sec:#c8452c;--f-allied:#13865a;color-scheme:light}
+*{box-sizing:border-box}[hidden]{display:none!important}
+html,body{margin:0;background:var(--page);color:var(--ink);font:15px/1.5 var(--font);font-feature-settings:"cv11","ss01";-webkit-font-smoothing:antialiased}
+body{min-height:100vh;display:flex;flex-direction:column;transition:background-color .3s var(--ease)}
+h1,h2,h3,p{margin:0}
+h1{font-size:clamp(30px,3.6vw,48px);line-height:1.08;font-weight:760;letter-spacing:-.032em;max-width:22em;text-wrap:balance}
+h2{font-size:20px;line-height:1.25;font-weight:700;letter-spacing:-.015em}
+b,strong{font-weight:680}a{color:var(--focus)}
+button,select,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:6px}
+td{font-variant-numeric:tabular-nums}
+
+/* top bar */
+.top{position:sticky;top:0;z-index:30;display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;padding:12px 28px;
+  background:color-mix(in srgb,var(--page) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--ring)}
+.brand{display:flex;align-items:center;gap:9px;font-size:15px;letter-spacing:-.01em}.brand strong{font-weight:740}
+.brand .mute{color:var(--mute);font-size:12.5px}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--good);display:inline-block;animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.tabs,.seg{display:inline-flex;flex-wrap:wrap;gap:2px;background:var(--card);border-radius:999px;padding:4px}
+.tabs button,.seg button{border:0;background:transparent;color:var(--ink2);padding:6px 14px;border-radius:999px;font-weight:560;font-size:14px;cursor:pointer;
+  transition:background-color .18s var(--ease),color .18s var(--ease),transform .18s var(--ease)}
+.tabs button:hover,.seg button:hover{color:var(--ink)}
+.tabs button[aria-pressed=true],.seg button[aria-pressed=true]{color:var(--ink);background:var(--card3)}
+.tabs button:active,.seg button:active,.pillbtn:active{transform:scale(.96)}
+.cats{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.pillbtn{border:0;background:var(--card);border-radius:999px;padding:7px 14px;cursor:pointer;color:var(--ink2);font-weight:600;font-size:14px;
+  transition:background-color .18s var(--ease),color .18s var(--ease),transform .18s var(--ease)}
+.pillbtn:hover{color:var(--ink)}
+.pillbtn[aria-pressed=true]{color:var(--ink);background:var(--card3)}
+.pillbtn[data-c]::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--dot);margin-right:7px;transition:transform .25s var(--ease)}
+.pillbtn[data-c][aria-pressed=true]::before{transform:scale(1.25)}
+.theme{width:36px;height:36px;padding:0;display:grid;place-items:center}
+
+/* layout */
+.wrap{flex:1;width:100%;max-width:1280px;margin:0 auto;padding:44px 28px 40px}
+.vhead{margin-bottom:30px;display:flex;flex-direction:column;gap:14px}
+.eyebrow{color:var(--eyebrow);font-size:13px;line-height:1.2;font-weight:680;text-transform:uppercase;letter-spacing:.14em}
+.lede{font-size:18.5px;line-height:1.5;color:var(--ink2);max-width:52em}.lede b{color:var(--ink)}
+.hl{color:var(--acct);transition:color .3s var(--ease)}
+.sec-label{color:var(--mute);font-size:13px;font-weight:680;text-transform:uppercase;letter-spacing:.14em;margin:38px 0 14px}
+.card{background:var(--card);border-radius:var(--r-card);padding:26px 28px;min-width:0}
+.foot{padding:14px 28px 26px;color:var(--mute);font-size:13px;max-width:1280px;margin:0 auto;width:100%}
+
+/* controls */
+.form{display:grid;grid-template-columns:minmax(0,2.3fr) minmax(0,1.3fr) minmax(0,.8fr) minmax(0,.7fr);gap:18px 20px;align-items:start}
+.lbl{display:block;color:var(--mute);font-size:12.5px;font-weight:680;text-transform:uppercase;letter-spacing:.12em;margin:0 0 8px 4px}
+.inp{width:100%;border:0;background:var(--card2);border-radius:999px;padding:11px 16px;transition:box-shadow .2s var(--ease),background-color .2s var(--ease)}
+.inp:hover{background:var(--card3)}.inp:focus{outline:none;box-shadow:0 0 0 2px var(--acct)}
+select.inp{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--mute) 50%),linear-gradient(135deg,var(--mute) 50%,transparent 50%);
+  background-position:calc(100% - 20px) 52%,calc(100% - 15px) 52%;background-size:5px 5px;background-repeat:no-repeat;padding-right:36px}
+.score-inp{font-size:20px;font-weight:720;letter-spacing:-.02em;padding:7px 16px}
+.row2{display:flex;flex-wrap:wrap;gap:14px 26px;align-items:center;margin-top:20px;padding-top:20px;border-top:1px solid var(--grid)}
+.ctl{display:flex;align-items:center;gap:10px;color:var(--mute);font-size:13px;font-weight:600}
+.seg button[data-f]::before{content:"";display:inline-block;width:8px;height:8px;border-radius:3px;background:var(--fc);margin-right:7px;vertical-align:1px}
+.search{flex:1;min-width:220px}
+
+/* degree combobox */
+.combo{position:relative}
+.combo .inp{padding-right:70px}
+.combo .code{position:absolute;right:14px;top:11px;color:var(--mute);font-size:12.5px;font-weight:600;pointer-events:none}
+.quick{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0 2px}
+.quick button{border:0;background:transparent;color:var(--mute);font-size:12.5px;font-weight:620;padding:3px 9px;border-radius:999px;cursor:pointer;transition:background-color .15s var(--ease),color .15s var(--ease)}
+.quick button:hover{background:var(--card2);color:var(--ink)}.quick button[aria-pressed=true]{background:var(--card3);color:var(--ink)}
+.pop{position:absolute;left:0;right:0;top:calc(100% + 8px);z-index:25;background:var(--card3);border-radius:18px;padding:8px;max-height:430px;overflow:auto;
+  box-shadow:0 18px 50px rgba(0,0,0,.45);animation:popin .18s var(--ease)}
+@keyframes popin{from{opacity:0;transform:translateY(-4px) scale(.99)}to{opacity:1;transform:none}}
+.pop .ph{color:var(--mute);font-size:11.5px;font-weight:680;text-transform:uppercase;letter-spacing:.12em;padding:8px 12px 6px}
+.opt{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;padding:8px 12px;border-radius:12px;cursor:pointer}
+.opt:hover,.opt.act{background:color-mix(in srgb,var(--ink) 8%,transparent)}
+.opt b{font-weight:650}.opt .full{grid-column:1;color:var(--mute);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.opt .n{grid-row:1/3;grid-column:2;align-self:center;text-align:right;font-size:12.5px;color:var(--ink2);font-weight:650}.opt .n span{display:block;color:var(--mute);font-weight:500;font-size:11.5px}
+.opt mark{background:none;color:var(--acct);font-weight:700}
+
+/* hero stats */
+.stats{display:grid;gap:22px 32px;grid-template-columns:repeat(4,minmax(0,1fr));margin-top:30px}
+.stat-n{font-size:42px;line-height:1.05;font-weight:760;letter-spacing:-.035em;white-space:nowrap}
+.stat-n .unit{font-size:.48em;font-weight:700;letter-spacing:-.01em;margin-left:3px;color:var(--ink2)}
+.stat-l{margin-top:6px;color:var(--ink2);font-size:15px;line-height:1.4}.stat-s{margin-top:2px;color:var(--mute);font-size:13.5px;line-height:1.35}
+.stat.good .stat-n{color:var(--good)}.stat.warn .stat-n{color:var(--warn)}.stat.empty .stat-n{color:var(--mute)}
+.meter{margin-top:28px}
+.gbar{position:relative;height:12px;border-radius:999px;background:var(--card2)}
+.gbar-fill{position:absolute;left:0;top:0;bottom:0;border-radius:999px;background:var(--good);transition:width .7s var(--ease)}
+.gbar-near{position:absolute;top:0;bottom:0;border-radius:999px;background:var(--warn);opacity:.55;transition:left .7s var(--ease),width .7s var(--ease)}
+.gcap{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;color:var(--mute);font-size:13px;margin-top:10px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13.5px;color:var(--ink2);list-style:none;padding:0;margin:0}
+.legend li{display:inline-flex;align-items:center;gap:7px}.sw{width:12px;height:12px;border-radius:4px;display:inline-block}
+
+/* results table */
+.res-h{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px;margin-bottom:16px}
+.res-h .mute{color:var(--mute);font-size:13.5px}
+.tablewrap{overflow:auto;max-height:80vh;margin:0 -28px -26px;padding:0 0 10px;border-radius:0 0 var(--r-card) var(--r-card)}
+table{border-collapse:separate;border-spacing:0;width:100%;min-width:1180px}
+th,td{padding:12px 10px;text-align:left;vertical-align:middle;border-bottom:1px solid var(--grid)}
+th:first-child,td:first-child{padding-left:28px}th:last-child,td:last-child{padding-right:28px}
+thead th{position:sticky;top:0;z-index:3;background:var(--card);color:var(--mute);font-size:12px;font-weight:680;text-transform:uppercase;letter-spacing:.1em;cursor:pointer;white-space:nowrap;user-select:none}
+thead th:hover{color:var(--ink)}th.sorted{color:var(--ink)}th.sorted::after{content:" ↓";color:var(--acct)}th.sorted.asc::after{content:" ↑"}
+.num{text-align:right}
+td.hi{background:color-mix(in srgb,var(--acct) 6%,transparent)}thead th.hi{color:var(--ink);background:color-mix(in srgb,var(--acct) 9%,var(--card))}
+tr.sep td{position:sticky;top:45px;z-index:2;background:var(--card);padding-top:22px;padding-bottom:10px;border-bottom:1px solid var(--grid)}
+.sep-t{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.sep-t b{font-size:15px;letter-spacing:-.01em}.sep-t span{color:var(--mute);font-size:13px}
+.glowpill{display:inline-flex;align-items:center;gap:7px;padding:3px 11px;border-radius:999px;font-size:12.5px;font-weight:700;color:var(--acct);
+  background:color-mix(in srgb,var(--acct) 14%,transparent);box-shadow:0 0 0 1px color-mix(in srgb,var(--acct) 35%,transparent),0 0 18px color-mix(in srgb,var(--acct) 35%,transparent);animation:glow 2.8s ease-in-out infinite}
+.glowpill.near{color:var(--warn);background:var(--warn-soft);box-shadow:0 0 0 1px color-mix(in srgb,var(--warn) 35%,transparent)}
+.glowpill.no{color:var(--mute);background:var(--card2);box-shadow:none;animation:none}
+@keyframes glow{0%,100%{box-shadow:0 0 0 1px color-mix(in srgb,var(--acct) 35%,transparent),0 0 10px color-mix(in srgb,var(--acct) 20%,transparent)}
+  50%{box-shadow:0 0 0 1px color-mix(in srgb,var(--acct) 55%,transparent),0 0 22px color-mix(in srgb,var(--acct) 45%,transparent)}}
+tbody tr.r{cursor:pointer;transition:background-color .15s var(--ease),opacity .2s var(--ease)}
+tbody tr.r:hover td{background:var(--card2)}
+tr.r.t1 td{background:color-mix(in srgb,var(--acct) 4%,transparent)}
+tr.r.t1 td:first-child{box-shadow:inset 3px 0 0 var(--acct),inset 26px 0 26px -22px color-mix(in srgb,var(--acct) 40%,transparent)}
+tr.r.t1 .inst{text-shadow:0 0 18px color-mix(in srgb,var(--acct) 45%,transparent)}
+tr.r.win td{background:color-mix(in srgb,var(--good) 7%,transparent)}
+tr.r.win td:first-child{box-shadow:inset 3px 0 0 var(--good),inset 30px 0 30px -22px color-mix(in srgb,var(--good) 55%,transparent)}
+tr.r.win .inst{text-shadow:0 0 18px color-mix(in srgb,var(--good) 55%,transparent)}
+tr.r.win:hover td{background:color-mix(in srgb,var(--good) 13%,var(--card2))}
+.glowpill.win{color:var(--good);background:var(--good-soft);animation:glowg 2.8s ease-in-out infinite}
+@keyframes glowg{0%,100%{box-shadow:0 0 0 1px color-mix(in srgb,var(--good) 35%,transparent),0 0 10px color-mix(in srgb,var(--good) 25%,transparent)}
+  50%{box-shadow:0 0 0 1px color-mix(in srgb,var(--good) 60%,transparent),0 0 24px color-mix(in srgb,var(--good) 50%,transparent)}}
+tr.r.t2 td:first-child{box-shadow:inset 3px 0 0 color-mix(in srgb,var(--warn) 70%,transparent)}
+tr.r.t3{opacity:.48}tr.r.t3:hover{opacity:.85}
+tr.r.t1:hover td.hi,tr.r.open td.hi{background:color-mix(in srgb,var(--acct) 12%,var(--card2))}
+tbody tr.r.in{animation:rowin .45s var(--ease) both;animation-delay:calc(var(--i) * 16ms)}
+@keyframes rowin{from{opacity:0;transform:translateY(6px)}to{transform:none}}
+tr.r.t3.in{animation-name:rowin3}@keyframes rowin3{from{opacity:0;transform:translateY(6px)}to{opacity:.48;transform:none}}
+.inst{font-weight:650;letter-spacing:-.01em;max-width:21em}
+.sub{color:var(--mute);font-size:12.5px}
+.prog{font-weight:600;max-width:27em}
+.tag{display:inline-flex;align-items:center;gap:6px;background:var(--card2);border-radius:999px;padding:1px 9px;font-size:12px;color:var(--ink2);font-weight:560;white-space:nowrap;margin:3px 4px 0 0}
+tr.r:hover .tag{background:var(--card3)}
+.tag.f::before{content:"";width:7px;height:7px;border-radius:2px;background:var(--fc)}
+.note{margin-top:6px;font-size:12.5px;line-height:1.4;color:var(--ink2);max-width:34em}
+.note.warn{color:var(--warn)}.note b{font-weight:650}
+.note .k{color:var(--mute)}
+td.c{font-weight:600;color:var(--ink2)}
+td.c.ok{color:var(--good);font-weight:720}td.c.near{color:var(--warn);font-weight:680}
+td.dash{color:var(--mute);opacity:.6}
+.final{font-size:18px;font-weight:760;letter-spacing:-.02em}.final.ok{color:var(--good)}.final.near{color:var(--warn)}
+.final .rn{display:block;font-size:11.5px;font-weight:600;color:var(--mute);letter-spacing:.04em}
+.pill{display:inline-flex;align-items:center;border-radius:999px;padding:2px 10px;font-size:12.5px;font-weight:650;white-space:nowrap;background:var(--card2);color:var(--ink2)}
+.pill.good{background:var(--good-soft);color:var(--good)}.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.spark{display:block}.spark .ln{fill:none;stroke:var(--acct);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.spark .me{stroke:var(--ink2);stroke-dasharray:3 3;stroke-width:1}.spark circle{fill:var(--acct)}.spark circle.ls{fill:var(--ink)}
+tr.r.open td{background:var(--card2)}
+.detail>td{padding:0 28px;background:var(--card2);border-bottom:1px solid var(--grid)}
+.dgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:20px;padding:6px 0 24px;animation:open .35s var(--ease) both}
+@keyframes open{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.dgrid h3{font-size:13px;font-weight:680;color:var(--mute);text-transform:uppercase;letter-spacing:.12em;margin:0 0 14px}
+.dbox{background:var(--card);border-radius:var(--r-tile);padding:18px 20px;min-width:0}
+.bars{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
+.bar{display:grid;grid-template-columns:3.4em minmax(0,1fr) 3em;align-items:center;gap:12px;font-size:14px}
+.bar-t{height:22px;border-radius:6px;background:var(--card2);overflow:hidden}
+.bar-f{height:100%;border-radius:6px;background:var(--mute);width:0;transition:width .8s var(--ease)}
+.bar-f.now{background:var(--acct)}.bar-v{font-weight:720;text-align:right}
+.mini{border-collapse:collapse;min-width:0;width:100%;font-size:13.5px}
+.mini th,.mini td{position:static;padding:6px 8px;border-bottom:1px solid var(--grid);background:none;cursor:default;letter-spacing:0;text-transform:none;font-size:13px}
+.mini th{color:var(--mute);font-weight:600}.mini tr.me td{color:var(--ink);font-weight:700;background:color-mix(in srgb,var(--acct) 12%,transparent)}
+.mini td:first-child,.mini th:first-child{padding-left:8px}.mini td:last-child,.mini th:last-child{padding-right:8px}
+.empty{padding:56px 20px;text-align:center;color:var(--mute);font-size:16px}
+
+/* IIT */
+.iitlist{display:flex;flex-direction:column;gap:16px}
+.iit{background:var(--card);border-radius:var(--r-card);padding:24px 28px;animation:rowin .5s var(--ease) both;animation-delay:calc(var(--i) * 50ms)}
+.iit-h{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 16px}
+.iit-h h2{font-size:22px}.iit-h .sub{font-size:13.5px}
+.iit-main{display:grid;grid-template-columns:minmax(220px,auto) 1fr;gap:28px;align-items:end;margin-top:18px}
+.iit-main .stat-n{font-size:52px}
+.iit.win{box-shadow:inset 3px 0 0 var(--good),0 0 28px -10px color-mix(in srgb,var(--good) 55%,transparent)}
+.iit table{min-width:640px;margin-top:6px}
+.iit th{position:static;background:none;cursor:default}
+.iit td,.iit th{padding:9px 10px}.iit td:first-child,.iit th:first-child{padding-left:0}.iit td:last-child,.iit th:last-child{padding-right:0}
+.iit td.me,.iit th.me{color:var(--ink);font-weight:720;background:color-mix(in srgb,var(--acct) 10%,transparent)}
+.iit details{margin-top:12px;color:var(--ink2);font-size:13.5px}.iit summary{cursor:pointer;color:var(--mute);font-weight:600;list-style:none}
+.iit summary::before{content:"+ "}.iit details[open] summary::before{content:"− "}.iit details p{margin-top:6px}
+.about{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+.about .card p+p{margin-top:10px}.about .card{color:var(--ink2)}.about h2{color:var(--ink);margin-bottom:12px}
+
+.fade{animation:fadeup .6s var(--ease) both}.fade.d1{animation-delay:.06s}.fade.d2{animation-delay:.12s}.fade.d3{animation-delay:.18s}
+@keyframes fadeup{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.swap{animation:swap .35s var(--ease)}@keyframes swap{from{opacity:.25;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+@media (max-width:980px){.form{grid-template-columns:1fr 1fr}.stats{grid-template-columns:1fr 1fr}.dgrid,.iit-main{grid-template-columns:1fr}.cats{margin-left:0}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="live-dot"></span><strong>GATE Seat Map</strong><span class="mute">CCMT + IIT · 2023–26</span></div>
+  <nav class="tabs" id="tabs"><button data-t="finder" aria-pressed="true">Finder</button><button data-t="iit" aria-pressed="false">IITs</button><button data-t="about" aria-pressed="false">About the data</button></nav>
+  <div class="cats" id="cats">
+    <button class="pillbtn" data-c="OPEN">General</button><button class="pillbtn" data-c="EWS">EWS</button><button class="pillbtn" data-c="OBC-NCL">OBC-NCL</button>
+    <button class="pillbtn" data-c="SC">SC</button><button class="pillbtn" data-c="ST">ST</button><button class="pillbtn" id="pwd" aria-pressed="false">PwD</button>
+    <button class="pillbtn theme" id="theme" title="Toggle light / dark">◐</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="v-finder">
+    <div class="vhead fade">
+      <div class="eyebrow" id="kicker">CCMT 2026</div>
+      <h1 id="headline">Where can your GATE score take you?</h1>
+      <p class="lede" id="lede"></p>
+    </div>
+
+    <div class="card fade d1">
+      <div class="form">
+        <div>
+          <label class="lbl" for="deg">Your degree &amp; branch</label>
+          <div class="combo"><input class="inp" id="deg" placeholder="Search: CSE, ECE, electrical, civil, M.Sc maths…" autocomplete="off" spellcheck="false"><span class="code" id="degCode"></span>
+            <div class="pop" id="degPop" hidden></div></div>
+          <div class="quick" id="quick"></div>
+        </div>
+        <div><label class="lbl" for="paper">GATE paper you wrote</label><select class="inp" id="paper"></select></div>
+        <div><label class="lbl" for="score">Your score in it</label><input class="inp score-inp" id="score" type="number" min="0" max="1000" placeholder="e.g. 620"></div>
+        <div><label class="lbl" for="year">Cutoffs from</label><select class="inp" id="year"></select></div>
+      </div>
+      <div class="row2">
+        <div class="ctl">Branch <div class="seg" id="fields"></div></div>
+        <div class="ctl">Institutes <div class="seg" id="types"></div></div>
+        <input class="inp search" id="q" placeholder="Search institute, city or programme…">
+      </div>
+      <div class="stats" id="stats"></div>
+      <div class="meter" id="meter" hidden>
+        <div class="gbar"><div class="gbar-fill" id="mFill"></div><div class="gbar-near" id="mNear"></div></div>
+        <div class="gcap"><span id="mCap"></span><ul class="legend"><li><span class="sw" style="background:var(--good)"></span>you clear the last special round</li><li><span class="sw" style="background:var(--warn);opacity:.7"></span>within 30 marks</li></ul></div>
+      </div>
+    </div>
+
+    <div class="sec-label fade d2">Every programme in your branch filter · round-wise closing scores for your category</div>
+    <div class="card fade d3">
+      <div class="res-h"><h2 id="resTitle">Programmes</h2><span class="mute">Hover a score for the opening score · click a row for 4-year history and every category</span></div>
+      <div class="tablewrap"><table><thead><tr id="thead"></tr></thead><tbody id="tbody"></tbody></table></div>
+    </div>
+    <p class="foot" style="padding-left:4px">Closing = lowest GATE score admitted in that round (CCMT publishes scores, not ranks). <b>SR2</b> is the last special round and <b>NSR</b> the National Spot Round, the final chance.
+      Eligibility is CCMT 2026's official programme × degree × GATE-paper mapping. "Near degree" rows list a closely related branch but not your exact one; they are a prompt to check with the institute, not a promise. Confirm on <a href="https://ccmt.admissions.nic.in" target="_blank" rel="noopener">ccmt.admissions.nic.in</a>.</p>
+  </section>
+
+  <section id="v-iit" hidden>
+    <div class="vhead fade">
+      <div class="eyebrow">IITs · own admissions via COAP</div>
+      <h1>IIT cutoffs for <span class="hl" id="iitPaper">GATE CS</span>.</h1>
+      <p class="lede">IITs don't go through CCMT, so they publish their own figures, and in different forms: a <b>minimum score to apply</b>, a <b>shortlisting cutoff</b>, or a <b>COAP closing score</b>. Each card shows one programme with every figure we found from the IIT's official site, cards your score clears first. Covered: <b id="iitCount"></b>. Not covered, because they publish no usable score figures: IIT Kanpur (admits by its own test and interview), IIT Roorkee (round lists carry names only, no scores), and IIT Patna, Tirupati and Bhilai (no cutoff document found).</p>
+    </div>
+    <div class="iitlist" id="iitList"></div>
+  </section>
+
+  <section id="v-about" hidden>
+    <div class="vhead fade"><div class="eyebrow">Method</div><h1>Where every number comes from.</h1></div>
+    <div class="about">
+      <div class="card fade d1"><h2>Sources</h2><p><b>NITs, IIITs and other CFTIs:</b> the CCMT 2026 seat matrix, the programme eligibility mapping (qualifying degree × GATE paper × group), and opening/closing GATE scores for every round of 2023, 2024, 2025 and 2026, all from ccmt.admissions.nic.in.</p><p><b>IITs:</b> each IIT's own admissions pages and PDFs.</p></div>
+      <div class="card fade d2"><h2>Exact vs near degree</h2><p><b>Exact:</b> CCMT lists your exact degree (or "any B.E./B.Tech discipline") for that programme and paper.</p><p><b>Near:</b> it lists a degree in the same branch family (say EEE when you have EE) but not yours. Institutes often treat these as equivalent, but CCMT matches the degree name on your certificate, so check before you lock a choice.</p></div>
+      <div class="card fade d3"><h2>Groups and rounds</h2><p>A programme can have several <b>groups</b>, each with its own merit list and set of GATE papers. Opening = highest score admitted in a round, closing = lowest. A dash means no seat in your category was filled that round.</p><p id="aboutStats"></p></div>
+    </div>
+  </section>
+</main>
+<footer class="foot" id="foot"></footer>
+
+<script src="data.js"></script>
+<script>
+const D = window.DATA, $ = id => document.getElementById(id), root = document.documentElement;
+const RS = ["R1","R2","R3","SR1","SR2","NSR"], HI = new Set([4,5]);
+const FL = Object.fromEntries(D.fields), TYPES = ["NIT","IIIT","Other (CFTI / GFTI / Univ.)"];
+const st = {fields:new Set(["cs","ai","sec","allied"]), types:new Set(TYPES), sort:{k:"final",dir:-1}, open:null, cat:"OPEN", tab:"finder", deg:-1};
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const press = (el, on) => el.setAttribute("aria-pressed", on ? "true" : "false");
+
+// ---------- degrees: codes, levels, popularity, near-degree families ----------
+const CODE = D.degrees.map(d => (d.match(/\(([^()]*)\)\s*$/) || [, ""])[1]);
+const byCode = Object.fromEntries(CODE.map((c, i) => [c, i]));
+const level = d => d.startsWith("B.E./B.Tech") || d.startsWith("B.E/B.Tech") || d.startsWith("B.Tech") ? "BTECH" : d.startsWith("M.Sc") ? "MSC" :
+  d.startsWith("M.E./M.Tech") ? "MTECH" : /^(4 Year )?B\.S/.test(d) ? "BS" : d.split(/[ -]/)[0];
+const LEVEL = D.degrees.map(level);
+const bare = d => d.replace(/-\([^()]*\)\s*$/, "").replace(/^(B\.E\.?\/B\.Tech\.?|B\.Tech\.?|M\.Sc\.|M\.E\.\/M\.Tech\.|4 Year B\.S\.|B\.S\.?( \(4-Year\))?) in /, "").trim();
+// the most common branches first (short label, search aliases); the rest by how many programmes list them
+const POPULAR = [
+  ["T122","CSE","Computer Science & Engineering","cse cs computer science"],["T135","ECE","Electronics & Communication","ece ec electronics communication"],
+  ["T131","EE","Electrical Engineering","ee electrical"],["T158","Mechanical","Mechanical Engineering","me mech mechanical"],["T118","Civil","Civil Engineering","ce civil"],
+  ["T149","IT","Information Technology","it information technology"],["T129","EEE","Electrical & Electronics Engineering","eee electrical electronics"],
+  ["T117","Chemical","Chemical Engineering","che chemical"],["T432","AI & DS","Artificial Intelligence & Data Science","aids ai ds data science artificial intelligence"],
+  ["T433","AI & ML","Artificial Intelligence & Machine Learning","aiml ai ml machine learning"],["T447","CSE (AI & ML)","CSE with AI & ML","cse aiml ai ml"],
+  ["T448","CSE (Data Science)","CSE with Data Science","cse ds data science"],["T120","Computer Engg","Computer Engineering","computer engineering ce comp"],
+  ["T137","ETC / EXTC","Electronics & Telecommunication","etc extc entc telecommunication"],["T136","EIE","Electronics & Instrumentation","eie ei instrumentation"],
+  ["T150","ICE","Instrumentation & Control","ice ic instrumentation control"],["T138","Electronics","Electronics Engineering","electronics"],
+  ["T113","Biotech","Biotechnology","bt biotech biotechnology"],["T102","Aerospace","Aerospace Engineering","aero aerospace"],["T101","Aeronautical","Aeronautical Engineering","aero aeronautical"],
+  ["T177","Production","Production Engineering","production pe"],["T176","Production & Industrial","Production & Industrial Engineering","pie production industrial"],
+  ["T160","Metallurgy","Metallurgical & Materials Engineering","mme metallurgy materials"],["T167","Mining","Mining Engineering","mining"],
+  ["T108","Automobile","Automobile Engineering","auto automobile"],["T535","Agricultural","Agricultural Engineering","agri agricultural"],
+  ["S510","M.Sc CS","M.Sc Computer Science","msc cs computer science"],["S519","M.Sc Maths","M.Sc Mathematics","msc maths mathematics"],
+  ["S525","M.Sc Statistics","M.Sc Statistics","msc stats statistics"],["S523","M.Sc Physics","M.Sc Physics","msc physics"],["B453","MCA","MCA","mca"]];
+const POP = new Map(POPULAR.filter(p => byCode[p[0]] != null).map((p, r) => [byCode[p[0]], {r, short:p[1], long:p[2], alias:p[3]}]));
+const FREQ = D.degrees.map(() => 0); D.programs.forEach(p => { const s = new Set(Object.values(p.elig).flat()); s.forEach(i => FREQ[i]++); });
+const shortDeg = i => i < 0 ? "" : POP.has(i) ? (LEVEL[i] === "BTECH" ? "B.Tech " : "") + POP.get(i).short : (LEVEL[i] === "BTECH" ? "B.Tech " : LEVEL[i] === "MSC" ? "M.Sc " : "") + bare(D.degrees[i]);
+// branch families: a degree's family is the one whose keyword appears earliest in its name; near = same level + same family
+const FAMILIES = [["Computer / IT", /comput|information technology|information science|software|artificial intelligence|data science|machine learning|cyber|\bai\b/],
+  ["Electrical", /electrical|power (engineering|system)/], ["Electronics / Communication", /electronic|communication|telecom/],
+  ["Instrumentation / Control", /instrumentation|control/], ["Mechanical / Production", /mechanical|production|manufactur|industrial engineering|automobile|mechatronic|thermal/],
+  ["Civil", /civil|structural|construction|infrastructure|transportation|water resource|geotech/], ["Chemical", /chemical|petro|polymer|plastic/],
+  ["Aero", /aeronaut|aerospace|avionic/], ["Metallurgy / Materials", /metallurg|material/], ["Mining", /mining|mineral/],
+  ["Bio", /biotech|bio-?medical|bioengineering|biolog/], ["Textile", /textile|fibre|fiber/], ["Agricultural / Food", /agricultur|food|dairy/],
+  ["Mathematics / Statistics", /mathemat|statistic/], ["Physics", /physic/]];
+const FAMS = D.degrees.map(d => { const n = bare(d).toLowerCase(); return FAMILIES.map(([f, rx], k) => [k, n.search(rx)]).filter(x => x[1] >= 0); });
+const PRIMARY = FAMS.map(f => f.length ? f.slice().sort((a, b) => a[1] - b[1])[0][0] : -1);
+const ANYI = Object.entries(D.anyDegree).filter(([, i]) => i != null);
+const NEAR = D.degrees.map((d, i) => PRIMARY[i] < 0 || CODE[i] === "T999" ? [] :
+  D.degrees.map((_, j) => j).filter(j => j !== i && LEVEL[j] === LEVEL[i] && FAMS[j].some(f => f[0] === PRIMARY[i]) && !/any of the disciplines|any discipline/i.test(D.degrees[j])));
+
+// eligibility tier for (programme, degree, paper): 1 exact, 2 near degree only, 3 not open
+function tier(p, di, paper) {
+  const L = p.elig[paper];
+  if (!L) return {t:3, why:`doesn't take GATE ${paper}` + (Object.keys(p.elig).length ? ` (takes ${Object.keys(p.elig).sort().slice(0, 6).join(", ")}${Object.keys(p.elig).length > 6 ? "…" : ""})` : "")};
+  const s = new Set(L);
+  if (s.has(di)) return {t:1};
+  const anyHit = ANYI.find(([pre, ai]) => D.degrees[di].startsWith(pre) && s.has(ai));
+  if (anyHit) return {t:1, any:true};
+  const near = NEAR[di].filter(j => s.has(j)).sort((a, b) => (POP.has(a) ? POP.get(a).r : 99) - (POP.has(b) ? POP.get(b).r : 99) || FREQ[b] - FREQ[a]);
+  if (near.length) return {t:2, near};
+  return {t:3, why:`takes GATE ${paper}, but not your degree or a near one`};
+}
+
+// ---------- degree combobox ----------
+const deg = $("deg"), pop = $("degPop"); let optList = [], act = 0;
+function setDeg(i) { st.deg = i; deg.value = i < 0 ? "" : shortDeg(i); $("degCode").textContent = i < 0 ? "" : CODE[i];
+  document.querySelectorAll("#quick button").forEach(b => press(b, +b.dataset.i === i)); }
+function rank(q) {
+  const toks = q.toLowerCase().replace(/[^a-z0-9&. ]/g, " ").split(/\s+/).filter(Boolean);
+  if (!toks.length) return [...POP.keys()].map(i => ({i, s:0}));
+  const out = [];
+  D.degrees.forEach((d, i) => {
+    const P = POP.get(i), name = (bare(d) + " " + d + " " + CODE[i]).toLowerCase(), words = name.split(/[^a-z0-9]+/), alias = P ? P.alias.split(" ") : [];
+    let s = 0;
+    for (const t of toks) {
+      if (alias.includes(t)) s += 60; else if (alias.some(a => a.startsWith(t))) s += 30;
+      else if (words.some(w => w.startsWith(t))) s += 14; else if (name.includes(t)) s += 5; else return;
+    }
+    if (P) s += 40 - P.r; s += Math.log2(1 + FREQ[i]) * 2;
+    if (bare(d).toLowerCase().startsWith(toks.join(" "))) s += 12;
+    out.push({i, s});
+  });
+  return out.sort((a, b) => b.s - a.s).slice(0, 60);
+}
+function hiText(text, q) { let h = esc(text); for (const t of q.toLowerCase().split(/\s+/).filter(x => x.length > 1))
+  h = h.replace(new RegExp("\\b(" + t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + ")", "ig"), "<mark>$1</mark>"); return h; }
+function openPop() {
+  const q = deg.value.trim() === shortDeg(st.deg) ? "" : deg.value.trim(), paper = $("paper").value;
+  optList = rank(q); act = 0;
+  const cnt = i => D.programs.filter(p => st.fields.has(p.field) && tier(p, i, paper).t === 1).length;
+  pop.innerHTML = `<div class="ph">${q ? "Best matches" : "Most common branches"} · programmes open with GATE ${esc(paper)}</div>` +
+    optList.map((o, k) => `<div class="opt ${k === act ? "act" : ""}" data-k="${k}"><b>${hiText(shortDeg(o.i), q)}</b><span class="n">${cnt(o.i)}<span>exact</span></span>
+      <span class="full">${hiText(D.degrees[o.i], q)}</span></div>`).join("") + (optList.length ? "" : `<div class="ph">No degree matches “${esc(q)}”</div>`);
+  pop.hidden = false;
+}
+function choose(k) { const o = optList[k]; if (!o) return; setDeg(o.i); pop.hidden = true; deg.blur(); render(true); renderIIT(); }
+deg.addEventListener("focus", () => { deg.select(); openPop(); });
+deg.addEventListener("input", openPop);
+deg.addEventListener("keydown", e => {
+  if (pop.hidden && e.key !== "Escape") openPop();
+  if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); act = Math.max(0, Math.min(optList.length - 1, act + (e.key === "ArrowDown" ? 1 : -1)));
+    pop.querySelectorAll(".opt").forEach((el, k) => el.classList.toggle("act", k === act)); pop.querySelector(".opt.act")?.scrollIntoView({block:"nearest"}); }
+  else if (e.key === "Enter") { e.preventDefault(); choose(act); }
+  else if (e.key === "Escape") { pop.hidden = true; setDeg(st.deg); deg.blur(); }
+});
+pop.addEventListener("mousedown", e => { const o = e.target.closest(".opt"); if (o) { e.preventDefault(); choose(+o.dataset.k); } });
+deg.addEventListener("blur", () => setTimeout(() => { if (!pop.hidden) { pop.hidden = true; setDeg(st.deg); } }, 120));
+$("quick").innerHTML = POPULAR.slice(0, 8).filter(p => byCode[p[0]] != null).map(p => `<button data-i="${byCode[p[0]]}">${p[1]}</button>`).join("");
+$("quick").onclick = e => { const b = e.target.closest("button"); if (!b) return; setDeg(+b.dataset.i); render(true); renderIIT(); };
+
+// ---------- other controls ----------
+$("paper").innerHTML = D.papers.map(([c,n]) => `<option value="${c}">${c} · ${esc(n)}</option>`).join("");
+$("year").innerHTML = D.years.map(y => `<option>${y}</option>`).join("");
+$("fields").innerHTML = D.fields.map(([k,l]) => `<button data-f="${k}" style="--fc:var(--f-${k})" aria-pressed="${st.fields.has(k)}">${l.replace(" (accepts CS/DA)","").replace(" core","")}</button>`).join("");
+$("types").innerHTML = TYPES.map(t => `<button data-k="${t}" aria-pressed="true">${t === TYPES[2] ? "Other CFTIs" : t + "s"}</button>`).join("");
+document.querySelectorAll("#cats [data-c]").forEach(b => b.style.setProperty("--dot", `var(--c-${b.dataset.c})`));
+$("foot").textContent = `Data built ${D.built} · CCMT cutoff rows joined: ${Object.entries(D.stats).map(([y,s]) => y + " " + s).join(" · ")}`;
+
+const P = new URLSearchParams(location.hash.slice(1));
+setDeg(byCode[P.get("deg")] ?? byCode["T118"] ?? 0);
+$("paper").value = P.get("paper") || "CS"; $("score").value = P.get("score") || "";
+$("year").value = P.get("year") || D.years[0]; st.cat = P.get("cat") || "OPEN"; press($("pwd"), P.get("pwd") === "1");
+root.dataset.theme = localStorage.getItem("gsm-theme") || "dark";
+function setCat(c) { st.cat = c; document.querySelectorAll("#cats [data-c]").forEach(b => press(b, b.dataset.c === c)); root.style.setProperty("--acct", `var(--c-${c})`); }
+setCat(st.cat);
+$("cats").onclick = e => { const b = e.target.closest("button"); if (!b) return;
+  if (b.id === "theme") { root.dataset.theme = root.dataset.theme === "dark" ? "light" : "dark"; localStorage.setItem("gsm-theme", root.dataset.theme); return; }
+  if (b.id === "pwd") press(b, b.getAttribute("aria-pressed") !== "true"); else setCat(b.dataset.c);
+  render(true); renderIIT(); };
+$("fields").onclick = e => { const b = e.target.closest("button"); if (!b) return; const k = b.dataset.f;
+  st.fields.has(k) ? st.fields.delete(k) : st.fields.add(k); press(b, st.fields.has(k)); render(true); };
+$("types").onclick = e => { const b = e.target.closest("button"); if (!b) return; const k = b.dataset.k;
+  st.types.has(k) ? st.types.delete(k) : st.types.add(k); press(b, st.types.has(k)); render(true); };
+for (const id of ["paper","year"]) $(id).addEventListener("input", () => { render(true); renderIIT(); });
+for (const id of ["score","q"]) $(id).addEventListener("input", () => render(false));
+$("score").addEventListener("input", renderIIT);
+$("tabs").onclick = e => { const b = e.target.closest("button"); if (!b) return; st.tab = b.dataset.t;
+  document.querySelectorAll("#tabs button").forEach(x => press(x, x === b));
+  for (const t of ["finder","iit","about"]) $("v-" + t).hidden = t !== st.tab;
+  document.querySelectorAll(`#v-${st.tab} .fade, #v-${st.tab} .iit`).forEach(el => { el.style.animation = "none"; el.offsetHeight; el.style.animation = ""; });
+  scrollTo({top:0, behavior:"smooth"}); };
+
+// ---------- helpers ----------
+const catKey = () => st.cat + ($("pwd").getAttribute("aria-pressed") === "true" ? "-PwD" : "");
+function lastSpecial(a) { if (!a) return null; for (const i of [4,5,3,2,1,0]) if (a[i] && a[i][1] != null) return {v:a[i][1], r:RS[i], i}; return null; }
+const cls = (v, s) => v == null || !s ? "" : s >= v ? "ok" : s >= v - 30 ? "near" : "";
+const shortInst = n => n.replace("National Institute of Technology", "NIT").replace("Indian Institute of Information Technology", "IIIT").replace("Indian Institute of Engineering Science and Technology", "IIEST");
+const shown = {};
+function count(el, to) {
+  const from = shown[el.id] ?? 0; shown[el.id] = to;
+  if (from === to) { el.textContent = to.toLocaleString("en-IN"); return; }
+  const t0 = performance.now();
+  (function f(t) { const k = Math.min(1, (t - t0) / 650), e = 1 - Math.pow(1 - k, 3);
+    el.textContent = Math.round(from + (to - from) * e).toLocaleString("en-IN"); if (k < 1) requestAnimationFrame(f); })(t0);
+}
+function stats(list) {   // [{n, unit, l, s, cls}]
+  $("stats").innerHTML = list.map((x, k) => `<div class="stat ${x.cls || ""}"><div class="stat-n"><span id="st${k}">${typeof x.n === "number" ? (shown["st" + k] ?? 0) : esc(x.n)}</span>${x.unit ? `<span class="unit">${x.unit}</span>` : ""}</div>
+    <div class="stat-l">${x.l}</div><div class="stat-s">${x.s || ""}</div></div>`).join("");
+  list.forEach((x, k) => { if (typeof x.n === "number") count($("st" + k), x.n); else shown["st" + k] = null; });
+}
+function spark(a, s) {
+  const pts = (a || []).map((x, i) => x && x[1] != null ? [i, x[1]] : null).filter(Boolean); if (!pts.length) return "";
+  const vs = pts.map(p => p[1]).concat(s ? [s] : []), lo = Math.min(...vs) - 5, hi = Math.max(...vs) + 5, W = 92, H = 28;
+  const X = i => 4 + i * (W - 8) / 5, Y = v => H - 4 - (v - lo) / (hi - lo || 1) * (H - 8), ls = lastSpecial(a);
+  return `<svg class="spark" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">` + (s ? `<line class="me" x1="0" x2="${W}" y1="${Y(s)}" y2="${Y(s)}"/>` : "") +
+    `<polyline class="ln" points="${pts.map(p => X(p[0]) + "," + Y(p[1])).join(" ")}"/>` +
+    pts.map(p => `<circle r="${p[0] === ls.i ? 3.2 : 2}" class="${p[0] === ls.i ? "ls" : ""}" cx="${X(p[0])}" cy="${Y(p[1])}"/>`).join("") + `</svg>`;
+}
+
+// ---------- table ----------
+const COLS = [{k:"inst",t:"Institute"},{k:"prog",t:"Programme · eligibility"},{k:"seats",t:"Seats",num:1},{k:"trend",t:"Trend",nos:1},
+  ...RS.map((r,i) => ({k:"r"+i,t:r,num:1,hi:HI.has(i)})),{k:"final",t:"Last special",num:1,hi:1},{k:"status",t:"You",nos:1}];
+function head() { $("thead").innerHTML = COLS.map(c => `<th data-k="${c.k}" class="${c.num?"num":""} ${c.hi?"hi":""} ${st.sort.k===c.k?"sorted"+(st.sort.dir>0?" asc":""):""}">${c.t}</th>`).join(""); }
+$("thead").onclick = e => { const th = e.target.closest("th"); if (!th) return; const c = COLS.find(x => x.k === th.dataset.k); if (c.nos) return;
+  st.sort = {k:c.k, dir: st.sort.k === c.k ? -st.sort.dir : (["inst","prog"].includes(c.k) ? 1 : -1)}; render(true); };
+$("tbody").onclick = e => { const tr = e.target.closest("tr.r"); if (!tr) return; st.open = st.open === tr.dataset.id ? null : tr.dataset.id; render(false); };
+
+function render(animate) {
+  const di = st.deg, paper = $("paper").value, c = catKey(), y = $("year").value, s = +$("score").value || 0, q = $("q").value.toLowerCase().trim();
+  history.replaceState(null, "", "#" + new URLSearchParams({deg:CODE[di] || "", paper, cat:st.cat, pwd:c.endsWith("PwD")?1:0, score:$("score").value, year:y}));
+  let rows = D.programs.filter(p => st.fields.has(p.field) && st.types.has(p.type) && (!q || (p.inst + " " + p.prog + " " + p.dept).toLowerCase().includes(q)))
+    .map(p => { const a = p.cut[y] && p.cut[y][c], ls = lastSpecial(a); return {p, a, ls, final: ls ? ls.v : null, seats: p.seats[c] || 0, el: di < 0 ? {t:3, why:"pick your degree"} : tier(p, di, paper)}; });
+  const {k, dir} = st.sort;
+  const val = r => k === "inst" ? r.p.inst : k === "prog" ? r.p.prog : k === "seats" ? r.seats : k === "final" ? r.final : (r.a && r.a[+k.slice(1)] ? r.a[+k.slice(1)][1] : null);
+  const fit = r => !s || r.final == null ? 2 : s >= r.final ? 0 : s >= r.final - 30 ? 1 : 2;
+  rows.forEach(r => { r.fit = r.el.t < 3 ? fit(r) : 2; r.g = r.el.t === 1 ? (s ? r.fit : 2) : r.el.t === 2 ? 3 : 4; });
+  rows.sort((x, z) => { if (x.g !== z.g) return x.g - z.g; if (x.fit !== z.fit) return x.fit - z.fit; const a = val(x), b = val(z); if (a == null && b == null) return 0; if (a == null) return 1; if (b == null) return -1;
+    return (typeof a === "string" ? a.localeCompare(b) : a - b) * dir; });
+  const T = [1, 2, 3].map(t => rows.filter(r => r.el.t === t));
+
+  // hero
+  const catLbl = {OPEN:"General",EWS:"EWS","OBC-NCL":"OBC-NCL",SC:"SC",ST:"ST"}[st.cat] + (c.endsWith("PwD") ? "-PwD" : "");
+  const dn = shortDeg(di), ex = T[0], wc = ex.filter(r => r.final != null), clear = wc.filter(r => s >= r.final), near = wc.filter(r => s < r.final && s >= r.final - 30);
+  const nInst = new Set(ex.map(r => r.p.inst)).size;
+  $("kicker").textContent = `CCMT ${y} cutoffs · ${dn || "pick a degree"} · GATE ${paper} · ${catLbl}`;
+  if (di < 0) { $("headline").innerHTML = `Start with <span class="hl">your degree</span>.`; $("lede").innerHTML = "Search your branch in the first box."; }
+  else if (!ex.length && !T[1].length) { $("headline").innerHTML = `Nothing here takes a ${esc(dn)} with <span class="hl">GATE ${paper}</span>.`;
+    $("lede").innerHTML = "Try turning on <b>Other</b> programmes, or check whether another GATE paper fits your degree."; }
+  else if (s && wc.length) {
+    const best = clear.slice().sort((a, b) => b.final - a.final)[0], stretch = near.slice().sort((a, b) => a.final - b.final)[0];
+    $("headline").innerHTML = `Your <span class="hl">${s}</span> would have cleared ${clear.length} of ${wc.length} programmes.`;
+    $("lede").innerHTML = `${catLbl} closing scores at the last special round, ${y}, for programmes that list a ${esc(dn)} with GATE ${paper}. ` +
+      (best ? `Strongest: <b>${esc(best.p.prog)}</b> at <b>${esc(shortInst(best.p.inst))}</b> (closed at ${best.final}). ` : "None closed at or below your score. ") +
+      (stretch ? `Closest stretch: <b>${esc(stretch.p.prog)}</b> at <b>${esc(shortInst(stretch.p.inst))}</b>, ${stretch.final - s} marks away.` : "");
+  } else {
+    $("headline").innerHTML = `<span class="hl">${ex.length}</span> programmes at ${nInst} institutes take a ${esc(dn)} with GATE ${paper}.`;
+    $("lede").innerHTML = (T[1].length ? `Another <b>${T[1].length}</b> list a near degree but not yours exactly; they're flagged below so you can check. ` : "") +
+      `Enter your ${esc(paper)} score to see what you would have cleared in every round, especially the <b>last special round</b>.`;
+  }
+  if (animate) for (const id of ["headline","lede"]) { const el = $(id); el.classList.remove("swap"); el.offsetWidth; el.classList.add("swap"); }
+
+  // stats: no repeats of the headline number
+  const seats = ex.reduce((t, r) => t + r.seats, 0), finals = wc.map(r => r.final).sort((a, b) => a - b);
+  if (s && wc.length) {
+    const toughest = clear.length ? Math.max(...clear.map(r => r.final)) : null;
+    stats([{n:clear.reduce((t, r) => t + r.seats, 0), unit:"seats", l:`in programmes you clear`, s:`${catLbl} seats, 2026 matrix`, cls:"good"},
+      {n:near.length, l:"within 30 marks", s:"worth listing as stretch choices", cls:near.length ? "warn" : ""},
+      {n:toughest ?? "–", l:"toughest closing you clear", s:toughest ? `last special round, ${y}` : "none at your score", cls:toughest ? "" : "empty"},
+      {n:T[1].length, l:"more via a near degree", s:"amber rows: confirm with the institute"}]);
+  } else {
+    stats([{n:seats, unit:"seats", l:`for ${catLbl}`, s:"across your exact-match programmes, 2026"},
+      {n:nInst, l:"institutes", s:`${new Set(ex.filter(r => r.p.type === "NIT").map(r => r.p.inst)).size} NITs · ${new Set(ex.filter(r => r.p.type === "IIIT").map(r => r.p.inst)).size} IIITs`},
+      {n:finals.length ? finals[0] : "–", l:"easiest last-special closing", s:finals.length ? `median ${finals[Math.floor(finals.length / 2)]} · ${y}` : `no ${y} data`},
+      {n:T[1].length, l:"more via a near degree", s:"amber rows: confirm with the institute"}]);
+  }
+  $("meter").hidden = !s || !wc.length;
+  if (s && wc.length) { const a = clear.length / wc.length * 100, b = near.length / wc.length * 100;
+    $("mFill").style.width = a + "%"; $("mNear").style.left = a + "%"; $("mNear").style.width = b + "%";
+    $("mCap").textContent = `${clear.length} cleared · ${near.length} within 30 · ${wc.length - clear.length - near.length} out of reach (of ${wc.length} with ${y} cutoffs)`; }
+
+  // table
+  head(); $("resTitle").textContent = `${rows.length} programmes in your filter`;
+  if (!rows.length) { $("tbody").innerHTML = `<tr><td colspan="${COLS.length}" class="empty">No programme matches these filters.</td></tr>`; return; }
+  const SEPS = [[`<span class="glowpill win">● Likely to get in</span>`, `your ${s} is at or above the ${y} last-special-round closing · ${dn} is listed for GATE ${paper}`],
+    [`<span class="glowpill near">◐ Within 30 marks</span>`, `stretch choices: closed just above your score in ${y}`],
+    [`<span class="glowpill">○ ${s ? "Open to you, out of reach" : "Open to you"}</span>`, s ? `${dn} is listed, but the ${y} closing was more than 30 above your score (or no ${y} data)` : `${dn} is listed for GATE ${paper}`],
+    [`<span class="glowpill near">◐ Near degree</span>`, `a closely related branch is listed, not ${dn}. Often accepted, not guaranteed: confirm with the institute`],
+    [`<span class="glowpill no">Not open</span>`, `doesn't take this degree family or this GATE paper`]];
+  let html = "", i = 0;
+  [0, 1, 2, 3, 4].map(g => rows.filter(r => r.g === g)).forEach((list, t) => {
+    if (!list.length) return;
+    html += `<tr class="sep"><td colspan="${COLS.length}"><div class="sep-t">${SEPS[t][0]}<b>${list.length}</b><span>${SEPS[t][1]}</span></div></td></tr>`;
+    html += list.slice(0, t === 4 ? 250 : 500).map(r => row(r, i++, animate, s, c)).join("");
+    if (t === 4 && list.length > 250) html += `<tr><td colspan="${COLS.length}" class="empty">+${list.length - 250} more not open. Narrow with search.</td></tr>`;
+  });
+  $("tbody").innerHTML = html;
+  requestAnimationFrame(() => requestAnimationFrame(() => document.querySelectorAll(".bar-f[data-w]").forEach(b => b.style.width = b.dataset.w)));
+}
+function row(r, i, animate, s, c) {
+  const p = r.p, id = p.icode + p.pcode + p.group, open = st.open === id, t = r.el.t, win = t < 3 && s && r.fit === 0;
+  const cells = RS.map((_, j) => { const x = r.a && r.a[j];
+    return x && x[1] != null ? `<td class="num c ${HI.has(j)?"hi":""} ${t < 3 ? cls(x[1], s) : ""}" title="${RS[j]}: opening ${x[0] ?? "?"} · closing ${x[1]}">${x[1]}</td>` : `<td class="num dash ${HI.has(j)?"hi":""}">—</td>`; }).join("");
+  const status = t === 3 ? `<span class="pill">not open</span>` : !s || r.final == null ? `<span class="pill">${r.final == null ? "no data" : "–"}</span>` :
+    s >= r.final ? `<span class="pill good">+${s - r.final}</span>` : s >= r.final - 30 ? `<span class="pill warn">−${r.final - s}</span>` : `<span class="pill">−${r.final - s}</span>`;
+  let note;
+  if (t === 1) note = `<div class="note"><span class="k">Lists</span> ${r.el.any ? "<b>any B.E./B.Tech discipline</b>" : `<b>${esc(shortDeg(st.deg))}</b> (${CODE[st.deg]})`} <span class="k">with GATE ${esc($("paper").value)}</span></div>`;
+  else if (t === 2) { const nm = r.el.near.slice(0, 3).map(j => `<b>${esc(shortDeg(j))}</b> (${CODE[j]})`).join(", ");
+    note = `<div class="note warn">Lists ${nm}${r.el.near.length > 3 ? ` +${r.el.near.length - 3} more` : ""} (near degree), not your exact ${esc(shortDeg(st.deg))}. Often accepted, not guaranteed: confirm with the institute before choosing.</div>`; }
+  else note = `<div class="note"><span class="k">${esc(r.el.why)}</span></div>`;
+  return `<tr class="r t${t} ${win ? "win" : ""} ${animate && i < 40 ? "in" : ""} ${open ? "open" : ""}" style="--i:${i}" data-id="${id}">
+    <td><div class="inst">${esc(shortInst(p.inst))}</div><span class="tag">${p.type === TYPES[2] ? "CFTI" : p.type}</span></td>
+    <td><div class="prog">${esc(p.prog)}</div><span class="tag f" style="--fc:var(--f-${p.field})">${esc(FL[p.field].replace(" (accepts CS/DA)",""))}</span><span class="tag">group ${p.group}</span>${note}</td>
+    <td class="num">${r.seats || '<span class="sub">0</span>'}</td><td>${spark(r.a, t < 3 ? s : 0)}</td>${cells}
+    <td class="num hi final ${t < 3 ? cls(r.final, s) : ""}">${r.final ?? "—"}${r.ls ? `<span class="rn">${r.ls.r}</span>` : ""}</td>
+    <td>${status}</td></tr>` + (open ? detail(p, c) : "");
+}
+function detail(p, c) {
+  const y = $("year").value, paper = $("paper").value;
+  const bars = D.years.slice().reverse().map(yr => { const ls = lastSpecial(p.cut[yr] && p.cut[yr][c]);
+    return `<li class="bar"><span class="sub">${yr}</span><div class="bar-t"><div class="bar-f ${yr === y ? "now" : ""}" data-w="${ls ? ls.v / 10 : 0}%"></div></div><span class="bar-v">${ls ? ls.v : "—"}</span></li>`; }).join("");
+  const hist = `<table class="mini"><tr><th>${c}</th>${RS.map(r => `<th class="num">${r}</th>`).join("")}</tr>` +
+    D.years.map(yr => { const a = p.cut[yr] && p.cut[yr][c]; return `<tr class="${yr === y ? "me" : ""}"><td>${yr}</td>${RS.map((_, j) => `<td class="num">${a && a[j] && a[j][1] != null ? a[j][1] : "—"}</td>`).join("")}</tr>`; }).join("") + `</table>`;
+  const cats = D.cats.filter(k => p.cut[y] && p.cut[y][k]);
+  const all = `<table class="mini"><tr><th>${y}</th>${RS.map(r => `<th class="num">${r}</th>`).join("")}<th class="num">Seats</th></tr>` +
+    (cats.length ? cats.map(k => `<tr class="${k === c ? "me" : ""}"><td>${k}</td>${RS.map((_, j) => { const x = p.cut[y][k][j]; return `<td class="num" title="opening ${x ? x[0] : "–"}">${x && x[1] != null ? x[1] : "—"}</td>`; }).join("")}<td class="num">${p.seats[k]}</td></tr>`).join("")
+                 : `<tr><td colspan="8">No ${y} cutoffs published for this programme.</td></tr>`) + `</table>`;
+  const L = p.elig[paper] || [], fam = st.deg >= 0 ? new Set([st.deg, ...NEAR[st.deg]]) : new Set();
+  const listed = L.filter(j => fam.has(j)).map(j => shortDeg(j) + " (" + CODE[j] + ")");
+  return `<tr class="detail"><td colspan="${COLS.length}"><div class="dgrid">
+    <div class="dbox"><h3>Last special round · ${c} · 4 years</h3><ul class="bars">${bars}</ul><div style="margin-top:16px">${hist}</div></div>
+    <div class="dbox"><h3>Every category · ${y} closing scores</h3>${all}
+      <p class="sub" style="margin-top:12px">${esc(p.inst)} · ${esc(p.dept)} · programme ${p.pcode} · group ${p.group}<br>
+      GATE papers in this group: ${Object.keys(p.elig).sort().join(", ")}<br>
+      ${L.length ? `Degrees listed with GATE ${paper}: ${L.length}${listed.length ? ` · from your branch family: ${esc(listed.join(", "))}` : ""}` : ""}</p></div>
+  </div></td></tr>`;
+}
+
+// ---------- IIT: one card per programme ----------
+function yearKey(y) { const m = String(y).match(/20\d\d/); return m ? +m[0] : 0; }
+function renderIIT() {
+  const paper = $("paper").value, col = {OPEN:"GEN",EWS:"EWS","OBC-NCL":"OBC_NCL",SC:"SC",ST:"ST"}[st.cat], K = ["GEN","EWS","OBC_NCL","SC","ST","PwD"];
+  $("iitPaper").textContent = "GATE " + paper;
+  const recs = D.iit.filter(r => !r.gate_papers || r.gate_papers.toUpperCase().split(/[^A-Z]+/).includes(paper) || /all|any/i.test(r.gate_papers));
+  const groups = new Map();
+  for (const r of recs) { const key = r.iit + "|" + r.degree + "|" + r.program; if (!groups.has(key)) groups.set(key, []); groups.get(key).push(r); }
+  $("iitCount").textContent = `${new Set(D.iit.map(r => r.iit)).size} IITs (${[...new Set(D.iit.map(r => r.iit))].join(", ")})`;
+  const val = (r, k) => (r[k] && r[k] !== "same as GEN") ? r[k] : (k === "EWS" && /GN\/EWS share/i.test(r.notes) ? r.GEN : r[k]);
+  const sc = +$("score").value || 0, num = x => parseInt(x) || 0;
+  const cards = [...groups.values()].map(rs => { rs.sort((a, b) => yearKey(b.year) - yearKey(a.year)); const n = num(val(rs[0], col));
+    return {rs, n, fit: !sc || !n ? 2 : sc >= n ? 0 : sc >= n - 30 ? 1 : 2}; });
+  cards.sort((a, b) => a.fit - b.fit || b.n - a.n);
+  $("iitList").innerHTML = cards.length ? cards.map(({rs, fit}, gi) => {
+    const top = rs[0], v = val(top, col);
+    const qd = rs.map(r => r.qualifying_degree).find(q => q && !/same as above/i.test(q)) || "";
+    const notes = [...new Set(rs.map(r => r.notes).filter(Boolean))], srcs = [...new Set(rs.map(r => r.source_url).filter(Boolean))];
+    return `<article class="iit${fit === 0 ? " win" : ""}" style="--i:${gi}">
+      <div class="iit-h"><h2>${esc(top.iit)} · ${esc(top.degree)} ${esc(top.program)}</h2>${fit === 0 ? `<span class="glowpill win">● Your score clears this</span>` : fit === 1 ? `<span class="glowpill">◐ Within 30 marks</span>` : ""}<span class="sub">${esc(top.department || "")} · GATE ${esc(top.gate_papers)}</span></div>
+      <div class="iit-main"><div><div class="stat-n">${esc(v || "—")}</div><div class="stat-l">${esc(top.cutoff_type)}</div><div class="stat-s">${esc(top.year)} · ${esc(top.admission_route)} · ${{GEN:"General",OBC_NCL:"OBC-NCL"}[col] || col}</div></div>
+        <table><thead><tr><th>Year</th><th>Route · figure</th>${K.map(k => `<th class="num ${k === col ? "me" : ""}">${k.replace("_NCL","")}</th>`).join("")}</tr></thead>
+        <tbody>${rs.map(r => `<tr><td>${esc(r.year)}</td><td><span class="sub">${esc(r.admission_route)}</span><br>${esc(r.cutoff_type)}</td>${K.map(k => `<td class="num ${k === col ? "me" : ""}">${esc(val(r, k) || "—")}</td>`).join("")}</tr>`).join("")}</tbody></table></div>
+      <details><summary>Eligibility, notes and sources</summary>${qd ? `<p><b>Eligible degrees:</b> ${esc(qd)}</p>` : ""}${notes.map(n => `<p>${esc(n)}</p>`).join("")}
+        <p>${srcs.map((u, k) => `<a href="${esc(u)}" target="_blank" rel="noopener">Official source ${srcs.length > 1 ? k + 1 : ""} →</a>`).join(" · ")}</p></details>
+    </article>`; }).join("") : `<div class="card empty">No IIT records for GATE ${esc(paper)} yet.</div>`;
+}
+$("aboutStats").textContent = `${D.programs.length} CCMT programme-groups, ${D.degrees.length} qualifying degrees, ${D.papers.length} GATE papers, ${D.iit.length} IIT records.`;
+render(true); renderIIT();
+</script>
+</body>
+</html>
