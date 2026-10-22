@@ -473,7 +473,7 @@ function render(animate) {
     $("headline").innerHTML = `Your <span class="hl">${s}</span> would have cleared ${clear.length} of ${wc.length} programmes.`;
     $("lede").innerHTML = `${catLbl} closing scores at the last special round, ${y}, for programmes that list a ${esc(dn)} with GATE ${paper}. ` +
       (best ? `Strongest: <b>${esc(best.p.prog)}</b> at <b>${esc(shortInst(best.p.inst))}</b> (closed at ${best.final}). ` : "None closed at or below your score. ") +
-      (stretch ? `Closest stretch: <b>${esc(stretch.p.prog)}</b> at <b>${esc(shortInst(stretch.p.inst))}</b>, ${stretch.final - s} marks away.` : "");
+      (stretch ? `Closest stretch: <b>${esc(stretch.p.prog)}</b> at <b>${esc(shortInst(stretch.p.inst))}</b>, ${stretch.final - s} mark${stretch.final - s === 1 ? "" : "s"} away.` : "");
   } else {
     $("headline").innerHTML = `<span class="hl">${ex.length}</span> programmes at ${nInst} institutes take a ${esc(dn)} with GATE ${paper}.`;
     $("lede").innerHTML = (T[1].length ? `Another <b>${T[1].length}</b> list a near degree but not yours exactly; they're flagged below so you can check. ` : "") +
