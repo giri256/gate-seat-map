@@ -6,6 +6,7 @@ Enter your B.Tech branch, GATE paper, score and category. It shows every CCMT pr
 
 - **Near-degree hints:** if a programme lists a close variant of your degree (e.g. EEE when you have EE) but not yours, it's shown in amber with a note.
 - **IIT tab:** each IIT's own published figures (COAP closing scores, shortlisting cutoffs, minimum scores to apply) for 18 IITs, with links to the official PDFs.
+- **IISc · IIITs tab:** IISc Bangalore shortlisting cutoffs (AI, CDS), IIIT Bangalore and IIIT Delhi GATE cutoffs. IIIT Hyderabad (PGEE), DU (CUET-PG), DTU and NSUT publish no GATE closing scores, so searching them explains where to look instead.
 - Dark by default, light theme toggle. A static page, no tracking, no backend.
 
 ## Data

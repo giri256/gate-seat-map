@@ -202,7 +202,7 @@ tr.r.open td{background:var(--card2)}
 <body>
 <header class="top">
   <div class="brand"><span class="live-dot"></span><strong>GATE Seat Map</strong><span class="mute">CCMT + IIT · 2023–26</span></div>
-  <nav class="tabs" id="tabs"><button data-t="finder" aria-pressed="true">Finder</button><button data-t="iit" aria-pressed="false">IITs</button><button data-t="about" aria-pressed="false">About the data</button></nav>
+  <nav class="tabs" id="tabs"><button data-t="finder" aria-pressed="true">Finder</button><button data-t="iit" aria-pressed="false">IITs</button><button data-t="oth" aria-pressed="false">IISc · IIITs</button><button data-t="about" aria-pressed="false">About the data</button></nav>
   <div class="cats" id="cats">
     <button class="pillbtn" data-c="OPEN">General</button><button class="pillbtn" data-c="EWS">EWS</button><button class="pillbtn" data-c="OBC-NCL">OBC-NCL</button>
     <button class="pillbtn" data-c="SC">SC</button><button class="pillbtn" data-c="ST">ST</button><button class="pillbtn" id="pwd" aria-pressed="false">PwD</button>
@@ -260,10 +260,20 @@ tr.r.open td{background:var(--card2)}
     <div class="iitlist" id="iitList"></div>
   </section>
 
+  <section id="v-oth" hidden>
+    <div class="vhead fade">
+      <div class="eyebrow">Outside CCMT and COAP · own admissions</div>
+      <h1>IISc and top IIITs for <span class="hl" id="othPaper">GATE CS</span>.</h1>
+      <p class="lede">These run their own admissions, so they're missing from the CCMT finder. Their figures come in different forms: <b>IISc</b> publishes the score you need to get a test or interview call, <b>IIIT Bangalore</b> the last score it made an offer to (one cutoff for every category), <b>IIIT Delhi</b> only the score that skips its entrance test. Each card says which. Covered: <b id="othCount"></b>.
+        Not here: <b>IIIT Hyderabad</b> admits to M.Tech only through its own PGEE exam, not GATE. <b>Delhi University</b>'s CS master's (MCA, M.Sc) go through CUET-PG, not GATE. <b>DTU</b> and <b>NSUT</b> admit on GATE merit lists but publish no closing scores (at DTU in 2026, CSE, AI, Cybersecurity, IT, Software Engg and Data Science had no General seats left after Round 1). IIIT Allahabad, ABV-IIITM Gwalior, IIITDM Jabalpur/Kancheepuram, IIEST Shibpur, DIAT, IIST and JNU <i>are</i> in CCMT, so check them in the Finder.</p>
+    </div>
+    <div class="iitlist" id="othList"></div>
+  </section>
+
   <section id="v-about" hidden>
     <div class="vhead fade"><div class="eyebrow">Method</div><h1>Where every number comes from.</h1></div>
     <div class="about">
-      <div class="card fade d1"><h2>Sources</h2><p><b>NITs, IIITs and other CFTIs:</b> the CCMT 2026 seat matrix, the programme eligibility mapping (qualifying degree × GATE paper × group), and opening/closing GATE scores for every round of 2023, 2024, 2025 and 2026, all from ccmt.admissions.nic.in.</p><p><b>IITs:</b> each IIT's own admissions pages and PDFs.</p></div>
+      <div class="card fade d1"><h2>Sources</h2><p><b>NITs, IIITs and other CFTIs:</b> the CCMT 2026 seat matrix, the programme eligibility mapping (qualifying degree × GATE paper × group), and opening/closing GATE scores for every round of 2023, 2024, 2025 and 2026, all from ccmt.admissions.nic.in.</p><p><b>IITs:</b> each IIT's own admissions pages and PDFs.</p><p><b>IISc, IIIT Bangalore, IIIT Delhi:</b> their official cutoff reports and admission pages.</p></div>
       <div class="card fade d2"><h2>Exact vs near degree</h2><p><b>Exact:</b> CCMT lists your exact degree (or "any B.E./B.Tech discipline") for that programme and paper.</p><p><b>Near:</b> it lists a degree in the same branch family (say EEE when you have EE) but not yours. Institutes often treat these as equivalent, but CCMT matches the degree name on your certificate, so check before you lock a choice.</p></div>
       <div class="card fade d3"><h2>Groups and rounds</h2><p>A programme can have several <b>groups</b>, each with its own merit list and set of GATE papers. Opening = highest score admitted in a round, closing = lowest. A dash means no seat in your category was filled that round.</p><p id="aboutStats"></p></div>
     </div>
@@ -389,12 +399,12 @@ document.querySelectorAll("#cats [data-c]").forEach(b => b.style.setProperty("--
 $("foot").textContent = `Data built ${D.built} · CCMT cutoff rows joined: ${Object.entries(D.stats).map(([y,s]) => y + " " + s).join(" · ")}`;
 
 // Shareable state in a short readable hash: #/<degree>/<paper>[/<score>][/<cat>[-pwd]][/<year>], defaults left out
-// (e.g. #/cse/cs/650/obc). No hash at all while everything is at its default. Old ?deg=T118&paper=... links still load.
+// (e.g. #/cse/cs/650/obc). No hash at all while everything is at its default. Old ?deg=T131&paper=... links still load.
 const slug = x => x.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 const DEG_SLUG = CODE.map((c, i) => POP.has(i) ? slug(POP.get(i).short) : c.toLowerCase());
 const bySlug = Object.fromEntries(DEG_SLUG.map((x, i) => [x, i]));
 const CAT_SLUG = {OPEN:"gen", EWS:"ews", "OBC-NCL":"obc", SC:"sc", ST:"st"}, byCatSlug = Object.fromEntries(Object.entries(CAT_SLUG).map(([k, v]) => [v, k]));
-const DEF = {deg: byCode["T118"] ?? 0, paper: "CS", year: D.years[0], cat: "OPEN"};
+const DEF = {deg: byCode["T131"] ?? 0, paper: "CS", year: D.years[0], cat: "OPEN"};
 function readHash() {
   const h = decodeURIComponent(location.hash.slice(1)), o = {};
   if (h.includes("=")) { const P = new URLSearchParams(h);
@@ -434,7 +444,7 @@ for (const id of ["score","q"]) $(id).addEventListener("input", () => render(fal
 $("score").addEventListener("input", renderIIT);
 $("tabs").onclick = e => { const b = e.target.closest("button"); if (!b) return; st.tab = b.dataset.t;
   document.querySelectorAll("#tabs button").forEach(x => press(x, x === b));
-  for (const t of ["finder","iit","about"]) $("v-" + t).hidden = t !== st.tab;
+  for (const t of ["finder","iit","oth","about"]) $("v-" + t).hidden = t !== st.tab;
   document.querySelectorAll(`#v-${st.tab} .fade, #v-${st.tab} .iit`).forEach(el => { el.style.animation = "none"; el.offsetHeight; el.style.animation = ""; });
   scrollTo({top:0, behavior:"smooth"}); };
 
@@ -501,8 +511,9 @@ function render(animate) {
       (best ? `Strongest: <b>${esc(best.p.prog)}</b> at <b>${esc(shortInst(best.p.inst))}</b> (closed at ${best.final}). ` : "None closed at or below your score. ") +
       (stretch ? `Closest stretch: <b>${esc(stretch.p.prog)}</b> at <b>${esc(shortInst(stretch.p.inst))}</b>, ${stretch.final - s} mark${stretch.final - s === 1 ? "" : "s"} away.` : "");
   } else {
-    $("headline").innerHTML = `<span class="hl">${ex.length}</span> programmes at ${nInst} institutes take a ${esc(dn)} with GATE ${paper}.`;
-    $("lede").innerHTML = (T[1].length ? `Another <b>${T[1].length}</b> list a near degree but not yours exactly; they're flagged below so you can check. ` : "") +
+    $("headline").innerHTML = `<span class="hl">${ex.length}</span> programme${ex.length === 1 ? "" : "s"} at ${nInst} institute${nInst === 1 ? "" : "s"} take${ex.length === 1 ? "s" : ""} a ${esc(dn)} with GATE ${paper}.`;
+    $("lede").innerHTML = (T[1].length ? (T[1].length === 1 ? `<b>1</b> more programme accepts a degree close to ${esc(dn)}, but doesn't name ${esc(dn)} itself.` : `<b>${T[1].length}</b> more programmes accept a degree close to ${esc(dn)}, but don't name ${esc(dn)} itself.`) +
+      (T[1].length === 1 ? ` It's marked in amber below; confirm with the institute before counting on it. ` : ` They're marked in amber below; confirm with the institute before counting on them. `) : "") +
       `Enter your ${esc(paper)} score to see what you would have cleared in every round, especially the <b>last special round</b>.`;
   }
   if (animate) for (const id of ["headline","lede"]) { const el = $(id); el.classList.remove("swap"); el.offsetWidth; el.classList.add("swap"); }
@@ -528,7 +539,7 @@ function render(animate) {
 
   // table
   head(); $("resTitle").textContent = `${rows.length} programmes in your filter`;
-  if (!rows.length) { $("tbody").innerHTML = `<tr><td colspan="${COLS.length}" class="empty">No programme matches these filters.</td></tr>`; return; }
+  if (!rows.length) { $("tbody").innerHTML = `<tr><td colspan="${COLS.length}" class="empty">${outsideHint(q) || "No programme matches these filters."}</td></tr>`; return; }
   const SEPS = [[`<span class="glowpill win">● Likely to get in</span>`, `your ${s} is at or above the ${y} last-special-round closing · ${dn} is listed for GATE ${paper}`],
     [`<span class="glowpill near">◐ Within 30 marks</span>`, `stretch choices: closed just above your score in ${y}`],
     [`<span class="glowpill">○ ${s ? "Open to you, out of reach" : "Open to you"}</span>`, s ? `${dn} is listed, but the ${y} closing was more than 30 above your score (or no ${y} data)` : `${dn} is listed for GATE ${paper}`],
@@ -585,19 +596,33 @@ function detail(p, c) {
 
 // ---------- IIT: one card per programme ----------
 function yearKey(y) { const m = String(y).match(/20\d\d/); return m ? +m[0] : 0; }
-function renderIIT() {
+// Searching the CCMT finder for a college that isn't in CCMT: say where it is (or why it isn't on the site)
+const ELSEWHERE = [[/iiit ?h|iiit hyd|hyderabad iiit|international institute of information technology,? hyd/, "IIIT Hyderabad admits to M.Tech only through its own PGEE exam, not GATE, so it has no GATE cutoffs."],
+  [/^du$|delhi univ|university of delhi/, "Delhi University's CS master's (MCA, M.Sc) go through CUET-PG, not GATE."],
+  [/^dtu|delhi tech/, "DTU admits on its own GATE merit list and publishes no closing scores. In 2026, CSE, AI, Cybersecurity, IT, Software Engg and Data Science had no General seats left after Round 1."],
+  [/nsut|netaji/, "NSUT admits on its own GATE merit list and publishes no closing scores."]];
+function outsideHint(q) {
+  if (!q || q.length < 3) return "";
+  for (const [rx, msg] of ELSEWHERE) if (rx.test(q)) return msg;
+  const key = q.replace(/[^a-z]/g, ""), qq = {iiitb:"iiit bangalore", iiitd:"iiit delhi"}[key] || q, kk = qq.replace(/[^a-z]/g, "");
+  const hit = (src, tab, label) => { const n = [...new Set(src.map(r => r.iit))].find(n => n.toLowerCase().includes(qq) || n.toLowerCase().replace(/[^a-z]/g, "").includes(kk));
+    return n ? `<b>${esc(n)}</b> doesn't go through CCMT. Its figures are on the <a href="#" onclick="document.querySelector('#tabs [data-t=${tab}]').click();return false">${label} tab →</a>` : ""; };
+  return hit(D.other || [], "oth", "IISc · IIITs") || hit(D.iit, "iit", "IITs");
+}
+function renderIIT() { cardsInto(D.iit, "iit", "IITs"); cardsInto(D.other || [], "oth", "institutes"); }
+function cardsInto(SRC, pfx, noun) {
   const paper = $("paper").value, col = {OPEN:"GEN",EWS:"EWS","OBC-NCL":"OBC_NCL",SC:"SC",ST:"ST"}[st.cat], K = ["GEN","EWS","OBC_NCL","SC","ST","PwD"];
-  $("iitPaper").textContent = "GATE " + paper;
-  const recs = D.iit.filter(r => !r.gate_papers || r.gate_papers.toUpperCase().split(/[^A-Z]+/).includes(paper) || /all|any/i.test(r.gate_papers));
+  $(pfx + "Paper").textContent = "GATE " + paper;
+  const recs = SRC.filter(r => !r.gate_papers || r.gate_papers.toUpperCase().split(/[^A-Z]+/).includes(paper) || /all|any/i.test(r.gate_papers));
   const groups = new Map();
   for (const r of recs) { const key = r.iit + "|" + r.degree + "|" + r.program; if (!groups.has(key)) groups.set(key, []); groups.get(key).push(r); }
-  $("iitCount").textContent = `${new Set(D.iit.map(r => r.iit)).size} IITs (${[...new Set(D.iit.map(r => r.iit))].join(", ")})`;
+  $(pfx + "Count").textContent = `${new Set(SRC.map(r => r.iit)).size} ${noun} (${[...new Set(SRC.map(r => r.iit))].join(", ")})`;
   const val = (r, k) => (r[k] && r[k] !== "same as GEN") ? r[k] : (k === "EWS" && /GN\/EWS share/i.test(r.notes) ? r.GEN : r[k]);
   const sc = +$("score").value || 0, num = x => parseInt(x) || 0;
   const cards = [...groups.values()].map(rs => { rs.sort((a, b) => yearKey(b.year) - yearKey(a.year)); const n = num(val(rs[0], col));
     return {rs, n, fit: !sc || !n ? 2 : sc >= n ? 0 : sc >= n - 30 ? 1 : 2}; });
   cards.sort((a, b) => a.fit - b.fit || b.n - a.n);
-  $("iitList").innerHTML = cards.length ? cards.map(({rs, fit}, gi) => {
+  $(pfx + "List").innerHTML = cards.length ? cards.map(({rs, fit}, gi) => {
     const top = rs[0], v = val(top, col);
     const qd = rs.map(r => r.qualifying_degree).find(q => q && !/same as above/i.test(q)) || "";
     const notes = [...new Set(rs.map(r => r.notes).filter(Boolean))], srcs = [...new Set(rs.map(r => r.source_url).filter(Boolean))];
@@ -608,9 +633,9 @@ function renderIIT() {
         <tbody>${rs.map(r => `<tr><td>${esc(r.year)}</td><td><span class="sub">${esc(r.admission_route)}</span><br>${esc(r.cutoff_type)}</td>${K.map(k => `<td class="num ${k === col ? "me" : ""}">${esc(val(r, k) || "—")}</td>`).join("")}</tr>`).join("")}</tbody></table></div>
       <details><summary>Eligibility, notes and sources</summary>${qd ? `<p><b>Eligible degrees:</b> ${esc(qd)}</p>` : ""}${notes.map(n => `<p>${esc(n)}</p>`).join("")}
         <p>${srcs.map((u, k) => `<a href="${esc(u)}" target="_blank" rel="noopener">Official source ${srcs.length > 1 ? k + 1 : ""} →</a>`).join(" · ")}</p></details>
-    </article>`; }).join("") : `<div class="card empty">No IIT records for GATE ${esc(paper)} yet.</div>`;
+    </article>`; }).join("") : `<div class="card empty">No records for GATE ${esc(paper)} here yet.</div>`;
 }
-$("aboutStats").textContent = `${D.programs.length} CCMT programme-groups, ${D.degrees.length} qualifying degrees, ${D.papers.length} GATE papers, ${D.iit.length} IIT records.`;
+$("aboutStats").textContent = `${D.programs.length} CCMT programme-groups, ${D.degrees.length} qualifying degrees, ${D.papers.length} GATE papers, ${D.iit.length} IIT records, ${(D.other || []).length} IISc / IIIT records.`;
 render(true); renderIIT();
 </script>
 </body>
